@@ -101,6 +101,19 @@
       margin-left: 20%;
       margin-top: 10%;
     }
+    .salesMonth{
+      margin-left: 38%;
+      margin-top: 15%;
+    }
+    .salesMonth h4{
+      font-family: sans-serif;
+      font-size: 25px;
+      color: rgb(234, 81, 186);
+    }
+    .salesMonth h5{
+      font-family: sans-serif;
+      font-size: 18px;
+    }
     
     
     
@@ -154,47 +167,16 @@
  <h4 id="pageNo">Page No:1</h4>
  <button id="next">Next</button>
  <button id="previous">Previous</button>
- <h4>Per Page:10</h4>
-
-
+ <h4>Per Page:10</h4> 
+</div>
+<div class="salesMonth">
+  <h4>Statistics of the Month</h4>
+  <h5>Total Sale Anount: <span id="amount"> helo</span></h5>
+  <h5>Number of Sold Item: <span id="solditem">helo</span></h5>
+  <h5>Number of Unsold Item: <span id="unsold">helo</span></h5>
 </div>
   </div>
-  <!-- <div class="chartbox">
-  <canvas id="myChart"></canvas></div>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-var ctx = document.getElementById('myChart').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {}
-    
-});
-</script> -->
+ 
   <script>
 
 
@@ -227,7 +209,9 @@ var myChart = new Chart(ctx, {
 async function selectMonth() {
   let month = document.querySelector("#months").value;
   console.log("datatype"+typeof(month));
-
+  let totalAmoutSale=0;
+      let solditemCount=0;
+      let unsoldamoutcount=0;
   if (month > 0) {
     try {
       console.log("here "+typeof(month));
@@ -235,15 +219,17 @@ async function selectMonth() {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
+     
       const product = await response.json();
-      // console.log(typeof(product));
-
       let productitems = document.querySelector('.productitems');
       let out = "";
-
       for (let prod of product) {
-        console.log(prod.price);
+       
+        totalAmoutSale+=prod.price;
+        if(!prod.sold) {unsoldamoutcount+=1;
+        }
+        else{ solditemCount+=1;console.log(solditemCount)}
+        
         out += `
           <tr>
             <td>${prod.id}</td>
@@ -257,6 +243,10 @@ async function selectMonth() {
         `;
       }
 
+     
+      document.querySelector('#amount').innerText = Math.round(totalAmoutSale,2);
+      document.querySelector("#solditem").innerText=solditemCount;
+      document.querySelector("#unsold").innerText=unsoldamoutcount;
       productitems.innerHTML = out;
     } catch (error) {
       console.error(error);
